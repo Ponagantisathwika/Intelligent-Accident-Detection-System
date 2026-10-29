@@ -1,0 +1,13 @@
+Timestamp,Severity,Snapshot
+2025-12-22 08:02:57,MEDIUM,static/accidents/accident_2025-12-22_08-02-57.jpg
+2025-12-22 08:34:10,MEDIUM,static/accidents/accident_2025-12-22_08-34-10.jpg
+2025-12-22 08:37:25,MEDIUM,static/accidents/accident_2025-12-22_08-37-25.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-22 09:02:25,MEDIUM,static/accidents/accident_2025-12-22_09-02-25.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-24 12:28:18,MEDIUM,static/accidents/accident_2025-12-24_12-28-17.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-24 12:39:24,MEDIUM,static/accidents/accident_20251224_123923.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-24 12:45:18,MEDIUM,static/accidents/accident_1766560517.jpg,"https://maps.google.com/?q=17.384,78.4564"
+2025-12-24 13:04:52,MEDIUM,static/accidents/accident_2025-12-24_13-04-51.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-24 13:26:45,HIGH,static/accidents/live_2025-12-24_13-26-44.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-24 13:27:30,HIGH,static/accidents/live_2025-12-24_13-27-29.jpg,"https://www.google.com/maps?q=17.384,78.4564"
+2025-12-24 15:45:51,MEDIUM,static/accidents/accident_2025-12-24_15-45-50.jpg,"https://www.google.com/maps?q=16.9604,82.2381"
+2025-12-24 15:50:52,HIGH,static/accidents/live_2025-12-24_15-50-51.jpg,"https://www.google.com/maps?q=16.9604,82.2381"

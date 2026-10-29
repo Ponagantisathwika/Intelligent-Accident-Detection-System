@@ -1,0 +1,393 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Accident Detection System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .dashboard-title h2 {
+        color: var(--dark-red);
+        font-size: 1.8rem;
+    }
+    
+    .dashboard-controls {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        border-top: 4px solid;
+    }
+    
+    .stat-card.severity-high {
+        border-top-color: var(--primary-red);
+    }
+    
+    .stat-card.severity-medium {
+        border-top-color: var(--warning-yellow);
+    }
+    
+    .stat-card.severity-low {
+        border-top-color: var(--success-green);
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+    
+    .stat-label {
+        color: var(--light-gray);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .accidents-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .accidents-table th {
+        background: linear-gradient(135deg, var(--dark-red) 0%, var(--primary-red) 100%);
+        color: var(--white);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .accidents-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .accidents-table tr:hover {
+        background-color: rgba(245, 245, 245, 0.8);
+    }
+    
+    .severity-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    .severity-high {
+        background-color: rgba(211, 47, 47, 0.15);
+        color: var(--primary-red);
+    }
+    
+    .severity-medium {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #856404;
+    }
+    
+    .severity-low {
+        background-color: rgba(76, 175, 80, 0.15);
+        color: var(--success-green);
+    }
+    
+    .snapshot-img {
+        width: 120px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid #eee;
+        transition: transform 0.3s ease;
+    }
+    
+    .snapshot-img:hover {
+        transform: scale(1.8);
+        z-index: 10;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 3rem;
+        color: var(--light-gray);
+    }
+    
+    .no-data i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .time-filter {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .time-btn {
+        padding: 8px 16px;
+        background-color: #f0f0f0;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+    }
+    
+    .time-btn.active {
+        background-color: var(--primary-red);
+        color: white;
+    }
+    
+    .time-btn:hover:not(.active) {
+        background-color: #e0e0e0;
+    }
+    
+    .chart-container {
+        background-color: var(--white);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .chart-placeholder {
+        height: 300px;
+        background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--light-gray);
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="dashboard-title">
+        <h2><i class="fas fa-chart-line"></i> Accident Detection Dashboard</h2>
+        <p>Comprehensive overview of detected incidents and system analytics</p>
+    </div>
+    <div class="dashboard-controls">
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <a href="/live" class="btn btn-primary">
+            <i class="fas fa-video"></i> Live View
+        </a>
+        <button class="btn btn-success" onclick="exportData()">
+            <i class="fas fa-file-export"></i> Export
+        </button>
+    </div>
+</div>
+
+<div class="stats-cards">
+    <div class="stat-card severity-high">
+        <div class="stat-icon" style="color: var(--primary-red);">
+            <i class="fas fa-car-crash"></i>
+        </div>
+        <div class="stat-value">{{ accidents|length }}</div>
+        <div class="stat-label">Total Incidents</div>
+    </div>
+    
+    <div class="stat-card severity-medium">
+        <div class="stat-icon" style="color: var(--warning-yellow);">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-value">
+            {% set high_severity = accidents|selectattr('Severity', 'equalto', 'High')|list|length %}
+            {{ high_severity }}
+        </div>
+        <div class="stat-label">High Severity</div>
+    </div>
+    
+    <div class="stat-card severity-low">
+        <div class="stat-icon" style="color: var(--success-green);">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-value">94.2%</div>
+        <div class="stat-label">Accuracy Rate</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--accent-orange);">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-value">0.8s</div>
+        <div class="stat-label">Avg. Response Time</div>
+    </div>
+</div>
+
+<div class="time-filter">
+    <button class="time-btn active" onclick="filterTime('today')">Today</button>
+    <button class="time-btn" onclick="filterTime('week')">This Week</button>
+    <button class="time-btn" onclick="filterTime('month')">This Month</button>
+    <button class="time-btn" onclick="filterTime('year')">This Year</button>
+    <button class="time-btn" onclick="filterTime('all')">All Time</button>
+</div>
+
+
+
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-history"></i>
+        <span>Detected Incidents</span>
+    </div>
+    
+    {% if accidents|length > 0 %}
+    <table class="accidents-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Severity</th>
+                <th>Location</th>
+                <th>Confidence</th>
+                <th>Snapshot</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acc in accidents %}
+            <tr>
+                <td>{{ acc.Timestamp }}</td>
+                <td>
+                    <span class="severity-badge severity-{{ acc.Severity|lower }}">
+                        {{ acc.Severity }}
+                    </span>
+                </td>
+                <td>Camera {{ loop.index % 3 + 1 }}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 60px; height: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden;">
+                            {% if acc.Severity == 'High' %}
+                            <div style="width: 92%; height: 100%; background-color: var(--primary-red);"></div>
+                            {% elif acc.Severity == 'Medium' %}
+                            <div style="width: 78%; height: 100%; background-color: var(--warning-yellow);"></div>
+                            {% else %}
+                            <div style="width: 65%; height: 100%; background-color: var(--success-green);"></div>
+                            {% endif %}
+                        </div>
+                        <span>
+                            {% if acc.Severity == 'High' %}92%
+                            {% elif acc.Severity == 'Medium' %}78%
+                            {% else %}65%
+                            {% endif %}
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <img src="/{{ acc.Snapshot }}" class="snapshot-img" alt="Incident snapshot">
+                </td>
+                <td>
+                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.9rem;">
+                        <i class="fas fa-search"></i> Details
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-data">
+        <i class="fas fa-check-circle" style="color: var(--success-green);"></i>
+        <h3>No Incidents Detected</h3>
+        <p>No accidents have been detected in the selected time period.</p>
+        <a href="/live" class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-video"></i> Start Live Monitoring
+        </a>
+    </div>
+    {% endif %}
+    
+    {% if accidents|length > 0 %}
+    <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            Showing {{ accidents|length }} incident{{ 's' if accidents|length != 1 else '' }}
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary" disabled>
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button class="btn btn-secondary">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function filterTime(period) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        event.target.classList.add('active');
+        
+        // In a real app, this would filter the data based on the selected time period
+        console.log('Filtering for period:', period);
+        
+        // Show a temporary message
+        const originalContent = document.querySelector('.card-title span').textContent;
+        document.querySelector('.card-title span').textContent = `Detected Incidents (${period.charAt(0).toUpperCase() + period.slice(1)})`;
+        
+        // Reset after 2 seconds (simulating filter)
+        setTimeout(() => {
+            document.querySelector('.card-title span').textContent = originalContent;
+        }, 2000);
+    }
+    
+    function exportData() {
+        // Simulate export functionality
+        const btn = event.target.closest('button');
+        const originalHTML = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            
+            // Show success message
+            alert('Data exported successfully! A CSV file has been downloaded.');
+        }, 1500);
+    }
+    
+    // Initialize with some sample data if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard loaded');
+    });
+</script>
+{% endblock %}

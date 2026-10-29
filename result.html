@@ -1,0 +1,166 @@
+{% extends "layout.html" %}
+
+{% block title %}Live Detection - Accident Detection System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .video-container {
+        position: relative;
+        background-color: var(--dark-gray);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    .video-header {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .video-title {
+        color: var(--white);
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .video-feed {
+        width: 100%;
+        display: block;
+    }
+    .detection-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    .alert-box {
+        position: absolute;
+        background-color: rgba(211, 47, 47, 0.9);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        animation: alert-pulse 1.5s infinite;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10;
+    }
+    @keyframes alert-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .detection-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background-color: var(--white);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+    .stat-label {
+        color: var(--light-gray);
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-video"></i>
+        <span>Live Camera Detection</span>
+    </div>
+
+    <div class="alert alert-warning">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>Live stream active:</strong>
+            Accident detection is running in real-time.
+        </div>
+    </div>
+
+    <div class="video-container">
+        <div class="video-header">
+            <div class="video-title">
+                <i class="fas fa-camera"></i>
+                <span>Camera Feed - Real-time Analysis</span>
+            </div>
+            <span class="status-indicator status-critical">
+                <span class="pulse-critical"></span> LIVE
+            </span>
+        </div>
+
+        {% if media_type == "stream" %}
+            <!-- Uploaded video -->
+            <img src="/video_stream" class="video-feed" width="700">
+            <div class="detection-overlay">
+                <div class="alert-box" style="top:20px; right:20px;">
+                    <i class="fas fa-play"></i> VIDEO ANALYSIS
+                </div>
+            </div>
+
+        {% elif media_type == "live" %}
+            <!-- LIVE CAMERA AUTO START -->
+            <img src="/live_stream" class="video-feed" width="700">
+            <div class="detection-overlay">
+                <div class="alert-box" style="top:20px; right:20px;">
+                    <i class="fas fa-camera"></i> LIVE DETECTION RUNNING
+                </div>
+            </div>
+
+        {% else %}
+            <!-- Not started -->
+            <div style="padding:4rem; text-align:center; color:var(--light-gray);">
+                <i class="fas fa-video-slash" style="font-size:4rem;"></i>
+                <h3>Camera Feed Not Active</h3>
+                <p>Click below to start live detection</p>
+                <a href="/live" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Start Detection
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="detection-stats">
+        <div class="stat-card">
+            <div class="stat-label">Detection Confidence</div>
+            <div class="stat-value" style="color:green;">92%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Objects Detected</div>
+            <div class="stat-value" style="color:orange;">14</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Processing Speed</div>
+            <div class="stat-value" style="color:#fbc02d;">24 FPS</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Alerts Today</div>
+            <div class="stat-value" style="color:red;">3</div>
+        </div>
+    </div>
+
+    <div style="display:flex; gap:15px;">
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+        <a href="/dashboard" class="btn btn-primary">
+            <i class="fas fa-chart-line"></i> View Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

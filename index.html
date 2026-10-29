@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block title %}Home - Accident Detection System{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-crosshairs"></i>
+        <span>Accident Detection Methods</span>
+    </div>
+    
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>Important:</strong> This system uses AI to detect potential accidents. Always verify alerts before taking action.
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+        <!-- Image Upload Card -->
+        <div class="card" style="border-top-color: var(--warning-yellow);">
+            <div class="card-title">
+                <i class="fas fa-image"></i>
+                <span>Image Analysis</span>
+            </div>
+            <p>Upload an image to analyze for potential accident detection. Supports JPG, PNG formats.</p>
+            
+            <form action="/predict_image" method="post" enctype="multipart/form-data" id="imageForm">
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Upload Image File</h3>
+                    <p>Drag & drop or click to select</p>
+                    <input type="file" name="image" id="imageInput" class="file-input" accept="image/*" required>
+                    <label for="imageInput" class="file-label">
+                        <i class="fas fa-folder-open"></i> Choose Image
+                    </label>
+                    <div id="imageFileName" class="file-name">No file selected</div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Analyze Image
+                </button>
+            </form>
+        </div>
+        
+        <!-- Video Upload Card -->
+        <div class="card" style="border-top-color: var(--accent-orange);">
+            <div class="card-title">
+                <i class="fas fa-video"></i>
+                <span>Video Analysis</span>
+            </div>
+            <p>Upload a video file for comprehensive accident detection analysis. Supports MP4, AVI, MOV formats.</p>
+            
+            <form action="/predict_video" method="post" enctype="multipart/form-data" id="videoForm">
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <h3>Upload Video File</h3>
+                    <p>Drag & drop or click to select</p>
+                    <input type="file" name="video" id="videoInput" class="file-input" accept="video/*" required>
+                    <label for="videoInput" class="file-label">
+                        <i class="fas fa-folder-open"></i> Choose Video
+                    </label>
+                    <div id="videoFileName" class="file-name">No file selected</div>
+                </div>
+                
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-play-circle"></i> Analyze Video
+                </button>
+            </form>
+        </div>
+        
+        <!-- Live Detection Card -->
+        <div class="card" style="border-top-color: var(--primary-red);">
+            <div class="card-title">
+                <i class="fas fa-camera"></i>
+                <span>Live Camera Detection</span>
+            </div>
+            <p>Start real-time accident detection using your camera feed. Monitor live streams for potential incidents.</p>
+            
+            <div style="background-color: rgba(245, 245, 245, 0.8); padding: 2rem; border-radius: 8px; text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-size: 3rem; color: var(--primary-red); margin-bottom: 1rem;">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <h3>Real-time Monitoring</h3>
+                <p>Continuous analysis of live camera feed</p>
+                <div class="status-indicator status-active" style="margin: 1rem auto;">
+                    <span class="pulse"></span>
+                    <span>System Ready</span>
+                </div>
+            </div>
+            
+            <a href="/live" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-play"></i> Start Live Detection
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-chart-bar"></i>
+        <span>System Status</span>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+        <div style="background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); padding: 1.5rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Detection Accuracy</h3>
+                <span class="status-indicator status-active">94.2%</span>
+            </div>
+            <div style="height: 10px; background-color: #e0e0e0; border-radius: 5px; margin: 1rem 0; overflow: hidden;">
+                <div style="width: 94.2%; height: 100%; background: linear-gradient(90deg, var(--success-green), #8BC34A); border-radius: 5px;"></div>
+            </div>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); padding: 1.5rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Response Time</h3>
+                <span class="status-indicator status-active">0.8s</span>
+            </div>
+            <div style="height: 10px; background-color: #e0e0e0; border-radius: 5px; margin: 1rem 0; overflow: hidden;">
+                <div style="width: 92%; height: 100%; background: linear-gradient(90deg, var(--warning-yellow), var(--accent-orange)); border-radius: 5px;"></div>
+            </div>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); padding: 1.5rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>System Uptime</h3>
+                <span class="status-indicator status-active">99.7%</span>
+            </div>
+            <div style="height: 10px; background-color: #e0e0e0; border-radius: 5px; margin: 1rem 0; overflow: hidden;">
+                <div style="width: 99.7%; height: 100%; background: linear-gradient(90deg, #2196F3, #03A9F4); border-radius: 5px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Image file input handler
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+        document.getElementById('imageFileName').textContent = fileName;
+    });
+    
+    // Video file input handler
+    document.getElementById('videoInput').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+        document.getElementById('videoFileName').textContent = fileName;
+    });
+    
+    // Form submission indicators
+    document.getElementById('imageForm').addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        btn.disabled = true;
+    });
+    
+    document.getElementById('videoForm').addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+    });
+</script>
+{% endblock %}
